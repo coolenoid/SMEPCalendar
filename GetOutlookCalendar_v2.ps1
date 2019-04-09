@@ -242,7 +242,7 @@ Function Upload-FileWebDAV {
   By: Michael Wong
   
   .EXAMPLE
-  Upload-FileWebDAV -File "C:\Apps\Michael\Projects\SMEP Structured Calendar\test.xml" -URL "\\60.53.88.25\WebDAV\DavWWWRoot"
+  Upload-FileWebDAV -File "C:\Apps\Michael\Projects\SMEP Structured Calendar\test.xml" -URL "\\<IP-Address>\WebDAV\DavWWWRoot"
 
 #>
 [CmdletBinding(SupportsShouldProcess = $True)] 
@@ -363,7 +363,7 @@ Get-OutlookCalendar $EmailID.email $EmailID.functiongroup olFolderCalendar -Filt
 #Get-OutlookCalendar $EmailID.email $EmailID.functiongroup olFolderCalendar | ConvertTo-Xml -as String -NoTypeInformation | Set-Content -Path $FileLocation
 
 #File Export & CleanUp
-Upload-FileWebDAV -File $FileLocation -URL "\\60.53.88.25\WebDAV\DavWWWRoot"
+Upload-FileWebDAV -File $FileLocation -URL "\\<IP-Address>\WebDAV\DavWWWRoot"
 Remove-Item $FileLocation
 
 
