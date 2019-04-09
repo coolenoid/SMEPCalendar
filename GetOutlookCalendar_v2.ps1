@@ -140,6 +140,15 @@ Function Get-OutlookCalendar {
 
         }
 
+        Function Get-DefaultDateTime {
+            # Extract the default Date/Time formatting from the local computer's "Culture" settings, and then create the format to use when parsing the date/time information.
+            $CultureDateTimeFormat = (Get-Culture).DateTimeFormat
+            $DateFormat = $CultureDateTimeFormat.ShortDatePattern
+            $TimeFormat = $CultureDateTimeFormat.ShortTimePattern
+            $DateTimeFormat = "$DateFormat $TimeFormat"
+            return $DateTimeFormat
+        }
+
     }
     Process {
         # load the required .NET types
@@ -208,9 +217,13 @@ Function Get-OutlookCalendar {
                 $folder.items.Restrict("[UnRead] = True") | %{ getCalendar $_ $Mailbox $main $FunctionGroup ($Folder).Name ($Folder).FolderPath }
             }
             elseif ($FilterByYear) {
-                Write-Verbose "Get-Outlook: Retreiving unread items from folder $($Folder.Name)"
+                Write-Verbose "Get-Outlook: Retreiving date filtered items from folder $($Folder.Name)"
+                # Change Date Filter parameters &  Trigger default Date/Time formatting
                 $datefilter = "1/1/2018 12:00AM"
-                $folder.items.Restrict("[Start] >= '" + (Get-Date $datefilter -Format "MM/dd/yyyy hh:mm AMPM") + "'") | %{ getCalendar $_ $Mailbox $main $FunctionGroup ($Folder).Name ($Folder).FolderPath }
+                $getDTFormat = Get-DefaultDateTime
+                
+                $folder.items.Restrict("[Start] >= '"+ (Get-Date $datefilter -Format $getDTFormat) +"'") | %{ getCalendar $_ $Mailbox $main $FunctionGroup ($Folder).Name ($Folder).FolderPath }
+                #$folder.items.Restrict("[Start] >= '" + (Get-Date $datefilter -Format "MM/dd/yyyy hh:mm AMPM") + "'") | %{ getCalendar $_ $Mailbox $main $FunctionGroup ($Folder).Name ($Folder).FolderPath }
             }
             else {
                 Write-Verbose "Get-Outlook: Retreiving read items from folder $($Folder.Name)"
@@ -323,14 +336,7 @@ if ($result -eq [System.Windows.Forms.DialogResult]::OK)
 }
 }
 
-Function Get-DefaultDateTime {
-# Extract the default Date/Time formatting from the local computer's "Culture" settings, and then create the format to use when parsing the date/time information.
-$CultureDateTimeFormat = (Get-Culture).DateTimeFormat
-$DateFormat = $CultureDateTimeFormat.ShortDatePattern
-$TimeFormat = $CultureDateTimeFormat.LongTimePattern
-$DateTimeFormat = "$DateFormat $TimeFormat"
-return $DateTimeFormat
-}
+
 
 
 <# Main () - Execution #>
@@ -343,8 +349,6 @@ if (Test-Path $FileLocation) {
     Remove-Item $FileLocation
 }
 
-# Trigger default Date/Time formatting
-$getDTFormat = Get-DefaultDateTime
 
 #Get-OutlookCalendar in CSV
 #Get-OutlookCalendar $EmailID.email $EmailID.functiongroup olFolderCalendar | Export-Csv -NoTypeInformation $FileLocation
