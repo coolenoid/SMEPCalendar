@@ -229,7 +229,7 @@ Function Upload-FileWebDAV {
   By: Michael Wong
   
   .EXAMPLE
-  Upload-FileWebDAV -File "C:\Apps\Michael\Projects\SMEP Structured Calendar\test.xml" -URL "\\60.53.88.25\WebDAV\DavWWWRoot"
+  Upload-FileWebDAV -File "C:\Apps\Michael\Projects\SMEP Structured Calendar\test.xml" -URL "\\<IP-Address>\WebDAV\DavWWWRoot"
 
 #>
 [CmdletBinding(SupportsShouldProcess = $True)] 
